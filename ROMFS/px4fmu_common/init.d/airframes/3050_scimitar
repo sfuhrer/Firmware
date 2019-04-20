@@ -1,0 +1,30 @@
+#!/bin/sh
+#
+# @name Scimitar (Delta Wing with rudder and thrust vecotirng)
+#
+# @type Flying Wing
+# @class Plane
+#
+# @output MAIN1 left elevon
+# @output MAIN2 right elevon
+# @output MAIN3 rudders
+# @output MAIN4 throttle
+# @output MAIN5 thrust vectoring
+#
+# @output AUX1 feed-through of RC AUX1 channel
+# @output AUX2 feed-through of RC AUX2 channel
+# @output AUX3 feed-through of RC AUX3 channel
+#
+# @maintainer Silvan Fuhrer <silvan.fuhrer@hotmail.com>
+#
+
+sh /etc/init.d/rc.fw_defaults
+
+if [ $AUTOCNF = yes ]
+then
+	param set FW_AIRSPD_MAX   40
+
+fi
+
+
+set MIXER fw_delta_wing_scimitar
