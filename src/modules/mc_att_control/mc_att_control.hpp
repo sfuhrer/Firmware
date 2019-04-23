@@ -278,7 +278,9 @@ private:
 		_param_mpc_thr_hover,			/**< throttle at which vehicle is at hover equilibrium */
 		(ParamInt<px4::params::MPC_THR_CURVE>) _param_mpc_thr_curve,				/**< throttle curve behavior */
 
-		(ParamInt<px4::params::MC_AIRMODE>) _param_mc_airmode
+		(ParamInt<px4::params::MC_AIRMODE>) _param_mc_airmode,
+
+		(ParamInt<px4::params::VT_TYPE>) _vtol_type
 	)
 
 	matrix::Vector3f _rate_p;		/**< P gain for angular rate error */
@@ -291,4 +293,3 @@ private:
 	float _man_tilt_max;			/**< maximum tilt allowed for manual flight [rad] */
 
 };
-
