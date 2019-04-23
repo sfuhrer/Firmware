@@ -45,5 +45,6 @@ fi
 set MAV_TYPE 19
 
 set MIXER caipirinha_vtol
+set MIXER_AUX vtol_delta
 
 set PWM_OUT 1234

@@ -294,10 +294,13 @@ int TAP_ESC::init()
 
 	/* Asign the id's to the ESCs to match the mux */
 	for (uint8_t phy_chan_index = 0; phy_chan_index < _channels_count; phy_chan_index++) {
-		config.channelMapTable[phy_chan_index] = _device_mux_map[phy_chan_index] &
-				ESC_MASK_MAP_CHANNEL;
-		config.channelMapTable[phy_chan_index] |= (_device_dir_map[phy_chan_index] << 4) &
-				ESC_MASK_MAP_RUNNING_DIRECTION;
+		if (false) {
+			config.channelMapTable[phy_chan_index] = _device_mux_map[phy_chan_index] & ESC_MASK_MAP_CHANNEL;
+			config.channelMapTable[phy_chan_index] |= (_device_dir_map[phy_chan_index] << 4) & ESC_MASK_MAP_RUNNING_DIRECTION;
+
+		} else {
+			config.channelMapTable[phy_chan_index] = phy_chan_index;
+		}
 	}
 
 	config.maxChannelValue = RPMMAX;
@@ -381,6 +384,10 @@ void TAP_ESC::send_esc_outputs(const uint16_t *pwm, const uint8_t motor_cnt)
 
 		} else if (rpm[i] < RPMSTOPPED) {
 			rpm[i] = RPMSTOPPED;
+		}
+
+		if (i == 0) {
+		rpm[i] |= RUN_REVERSE_MASK;
 		}
 	}
 
@@ -515,17 +522,19 @@ void TAP_ESC::cycle()
 			}
 
 		}
-
+		// const unsigned esc_count = 4;
 		uint16_t motor_out[TAP_ESC_MAX_MOTOR_NUM];
 
 		// We need to remap from the system default to what PX4's normal
 		// scheme is
+		num_outputs = 4;
+
 		switch (num_outputs) {
 		case 4:
-			motor_out[0] = (uint16_t)_outputs.output[2];
+			motor_out[0] = (uint16_t)_outputs.output[0];
+			motor_out[2] = (uint16_t)_outputs.output[1];
 			motor_out[1] = (uint16_t)_outputs.output[1];
-			motor_out[2] = (uint16_t)_outputs.output[0];
-			motor_out[3] = (uint16_t)_outputs.output[3];
+			motor_out[3] = (uint16_t)_outputs.output[0];
 			break;
 
 		case 6:
@@ -560,6 +569,8 @@ void TAP_ESC::cycle()
 		if (!tap_esc_common::parse_tap_esc_feedback(&_uartbuf, &_packet)) {
 			if (_packet.msg_id == ESCBUS_MSG_ID_RUN_INFO) {
 				RunInfoRepsonse &feed_back_data = _packet.d.rspRunInfo;
+
+				//printf("esc %d rpm %d \n", feed_back_data.channelID, feed_back_data.speed);
 
 				if (feed_back_data.channelID < esc_status_s::CONNECTED_ESC_MAX) {
 					_esc_feedback.esc[feed_back_data.channelID].esc_rpm = feed_back_data.speed;
