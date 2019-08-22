@@ -39,3 +39,5 @@ target_include_directories(AirspeedValidator
 )
 
 target_link_libraries(AirspeedValidator PUBLIC ecl_airdata)
+
+px4_add_unit_gtest(SRC AirspeedValidatorTest.cpp LINKLIBS AirspeedValidator)
