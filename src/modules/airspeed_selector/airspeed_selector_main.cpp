@@ -57,6 +57,7 @@
 #include <uORB/topics/vehicle_status.h>
 #include <uORB/topics/vtol_vehicle_status.h>
 #include <uORB/topics/wind_estimate.h>
+#include <uORB/PublicationMulti.hpp>
 
 using namespace time_literals;
 
@@ -94,7 +95,8 @@ private:
 	static constexpr int MAX_NUM_AIRSPEED_SENSORS = 3; /**< Support max 3 airspeed sensors */
 
 	orb_advert_t	_airspeed_validated_pub {nullptr};			/**< airspeed validated topic*/
-	orb_advert_t 	_wind_est_pub[MAX_NUM_AIRSPEED_SENSORS + 1] {};							/**< wind estimate topic (for each airspeed validator + purely sideslip fusion) */
+	uORB::PublicationMulti<wind_estimate_s>			_wind_pub{ORB_ID(wind_estimate), ORB_PRIO_DEFAULT};
+	// orb_advert_t 	_wind_est_pub[MAX_NUM_AIRSPEED_SENSORS + 1] {};							/**< wind estimate topic (for each airspeed validator + purely sideslip fusion) */
 	orb_advert_t 	_mavlink_log_pub {nullptr}; 						/**< mavlink log topic*/
 
 	uORB::Subscription _estimator_status_sub{ORB_ID(estimator_status)};
@@ -181,11 +183,13 @@ AirspeedModule::~AirspeedModule()
 {
 	ScheduleClear();
 
-	for (int i = 0; i < MAX_NUM_AIRSPEED_SENSORS; i++) {
-		if (_wind_est_pub[i] != nullptr) {
-			orb_unadvertise(_wind_est_pub[i]);
-		}
-	}
+	orb_unadvertise(_wind_pub);
+
+	// for (int i = 0; i < MAX_NUM_AIRSPEED_SENSORS; i++) {
+	// 	if (_wind_est_pub[i] != nullptr) {
+	// 		orb_unadvertise(_wind_est_pub[i]);
+	// 	}
+	// }
 
 	orb_unadvertise(_airspeed_validated_pub);
 
@@ -529,12 +533,14 @@ void AirspeedModule::select_airspeed_and_publish()
 			 ORB_PRIO_DEFAULT);
 
 	/* publish sideslip-only-fusion wind topic */
-	orb_publish_auto(ORB_ID(wind_estimate), &_wind_est_pub[0], &_wind_estimate_sideslip, &instance, ORB_PRIO_LOW);
+	// orb_publish_auto(ORB_ID(wind_estimate), &_wind_est_pub[0], &_wind_estimate_sideslip, &instance, ORB_PRIO_LOW);
+	_wind_pub.publish(_wind_estimate_sideslip);
 
 	/* publish the wind estimator states from all airspeed validators */
 	for (int i = 0; i < _number_of_airspeed_sensors; i++) {
 		wind_estimate_s wind_est = _airspeed_validator[i].get_wind_estimator_states(hrt_absolute_time());
-		orb_publish_auto(ORB_ID(wind_estimate), &_wind_est_pub[i + 1], &wind_est, &instance, ORB_PRIO_LOW);
+		// orb_publish_auto(ORB_ID(wind_estimate), &_wind_est_pub[i + 1], &wind_est, &instance, ORB_PRIO_LOW);
+		_wind_pub.publish(wind_est);
 	}
 
 }
