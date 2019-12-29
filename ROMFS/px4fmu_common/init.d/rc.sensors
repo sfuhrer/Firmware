@@ -22,26 +22,24 @@ fi
 
 if [ ${VEHICLE_TYPE} = fw -o ${VEHICLE_TYPE} = vtol ]
 then
-	if param compare CBRK_AIRSPD_CHK 0
+
+	sdp3x_airspeed start -a
+
+	# Pixhawk 2.1 has a MS5611 on I2C which gets wrongly
+	# detected as MS5525 because the chip manufacturer was so
+	# clever to assign the same I2C address and skip a WHO_AM_I
+	# register.
+	if [ $BOARD_FMUV3 = 21 ]
 	then
-		sdp3x_airspeed start -a
-
-		# Pixhawk 2.1 has a MS5611 on I2C which gets wrongly
-		# detected as MS5525 because the chip manufacturer was so
-		# clever to assign the same I2C address and skip a WHO_AM_I
-		# register.
-		if [ $BOARD_FMUV3 = 21 ]
-		then
-			ms5525_airspeed start -b 2
-		else
-			ms5525_airspeed start -a
-		fi
-
-		ms4525_airspeed start -a
-
-		ets_airspeed start -a
-
+		ms5525_airspeed start -b 2
+	else
+		ms5525_airspeed start -a
 	fi
+
+	ms4525_airspeed start -a
+
+	ets_airspeed start -a
+
 fi
 
 if param compare -s SENS_EN_BATT 1

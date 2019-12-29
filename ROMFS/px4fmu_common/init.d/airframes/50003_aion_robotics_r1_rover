@@ -66,9 +66,6 @@ then
 	param set PWM_MAX 2000
 	param set PWM_MIN 1000
 
-	# Enable Airspeed check circuit breaker because Rovers will have no airspeed sensor
-	param set CBRK_AIRSPD_CHK 162128
-
 	# Differential drive acts like ackermann steering with a maximum turn angle of 180 degrees, or pi radians
 	param set GND_MAX_ANG 3.1415
 

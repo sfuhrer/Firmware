@@ -87,20 +87,6 @@ PARAM_DEFINE_INT32(CBRK_RATE_CTRL, 0);
 PARAM_DEFINE_INT32(CBRK_IO_SAFETY, 0);
 
 /**
- * Circuit breaker for airspeed sensor
- *
- * Setting this parameter to 162128 will disable the check for an airspeed sensor.
- * WARNING: ENABLING THIS CIRCUIT BREAKER IS AT OWN RISK
- *
- * @reboot_required true
- * @min 0
- * @max 162128
- * @category Developer
- * @group Circuit Breaker
- */
-PARAM_DEFINE_INT32(CBRK_AIRSPD_CHK, 0);
-
-/**
  * Circuit breaker for flight termination
  *
  * Setting this parameter to 121212 will disable the flight termination action if triggered

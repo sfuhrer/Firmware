@@ -21,8 +21,6 @@ sh /etc/init.d/rc.vtol_defaults
 
 if [ $AUTOCNF = yes ]
 then
-	param set CBRK_AIRSPD_CHK 162128
-
 	param set FW_ARSP_MODE 2
 
 	param set FW_L1_PERIOD 17
