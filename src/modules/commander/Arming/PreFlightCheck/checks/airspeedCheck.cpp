@@ -38,24 +38,44 @@
 #include <math.h>
 #include <systemlib/mavlink_log.h>
 #include <uORB/Subscription.hpp>
-#include <uORB/topics/airspeed.h>
+#include <uORB/topics/airspeed_validated.h>
 #include <uORB/topics/subsystem_info.h>
 
 using namespace time_literals;
 
-bool PreFlightCheck::airspeedCheck(orb_advert_t *mavlink_log_pub, vehicle_status_s &status, const bool optional,
+bool PreFlightCheck::airspeedCheck(orb_advert_t *mavlink_log_pub, vehicle_status_s &status,
 				   const bool report_fail, const bool prearm)
 {
+	bool optional = true;
+
 	bool present = true;
 	bool success = true;
 
-	uORB::SubscriptionData<airspeed_s> airspeed_sub{ORB_ID(airspeed)};
-	airspeed_sub.update();
-	const airspeed_s &airspeed = airspeed_sub.get();
+	uORB::SubscriptionData<airspeed_validated_s> airspeed_validated_sub{ORB_ID(airspeed_validated)};
+	airspeed_validated_sub.update();
+	const airspeed_validated_s &airspeed_validated = airspeed_validated_sub.get();
 
-	if (hrt_elapsed_time(&airspeed.timestamp) > 1_s) {
-		if (report_fail && !optional) {
-			mavlink_log_critical(mavlink_log_pub, "Preflight Fail: Airspeed Sensor missing");
+	/*
+	 * Check if Airspeed Selector is up and running.
+	 */
+	if (hrt_elapsed_time(&airspeed_validated.timestamp) > 1_s) {
+		if (report_fail) {
+			mavlink_log_critical(mavlink_log_pub, "Preflight Fail: Airspeed Selector module down.");
+		}
+
+		present = false;
+		success = false;
+		goto out;
+	}
+
+
+	/*
+	 * Check if the airspeed validator declares the current sensor as valid.
+	 *
+	 */
+	if (!PX4_ISFINITE(airspeed_validated.equivalent_airspeed_m_s)) {
+		if (report_fail) {
+			mavlink_log_critical(mavlink_log_pub, "Preflight Fail: Airspeed Invalid.");
 		}
 
 		present = false;
@@ -69,22 +89,22 @@ bool PreFlightCheck::airspeedCheck(orb_advert_t *mavlink_log_pub, vehicle_status
 	 * for a pre-arm check, as then the cover is off and the natural airflow in the field
 	 * will ensure there is not zero noise.
 	 */
-	if (prearm && fabsf(airspeed.confidence) < 0.95f) {
-		if (report_fail) {
-			mavlink_log_critical(mavlink_log_pub, "Preflight Fail: Airspeed Sensor stuck");
-		}
+	// if (prearm && fabsf(airspeed.confidence) < 0.95f) {
+	// 	if (report_fail) {
+	// 		mavlink_log_critical(mavlink_log_pub, "Preflight Fail: Airspeed Sensor stuck");
+	// 	}
 
-		present = true;
-		success = false;
-		goto out;
-	}
+	// 	present = true;
+	// 	success = false;
+	// 	goto out;
+	// }
 
 	/**
 	 * Check if airspeed is higher than 4m/s (accepted max) while the vehicle is landed / not flying
 	 * Negative and positive offsets are considered. Do not check anymore while arming because pitot cover
 	 * might have been removed.
 	 */
-	if (fabsf(airspeed.indicated_airspeed_m_s) > 4.0f && !prearm) {
+	if (fabsf(airspeed_validated.equivalent_airspeed_m_s) > 4.0f && !prearm) {
 		if (report_fail) {
 			mavlink_log_critical(mavlink_log_pub, "Preflight Fail: check Airspeed Cal or Pitot");
 		}

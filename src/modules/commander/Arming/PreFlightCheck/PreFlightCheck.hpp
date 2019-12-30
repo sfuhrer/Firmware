@@ -102,8 +102,8 @@ private:
 	static bool baroCheck(orb_advert_t *mavlink_log_pub, vehicle_status_s &status, const uint8_t instance,
 			      const bool optional, int32_t &device_id, const bool report_fail);
 	static bool imuConsistencyCheck(orb_advert_t *mavlink_log_pub, vehicle_status_s &status, const bool report_status);
-	static bool airspeedCheck(orb_advert_t *mavlink_log_pub, vehicle_status_s &status, const bool optional,
-				  const bool report_fail, const bool prearm);
+	static bool airspeedCheck(orb_advert_t *mavlink_log_pub, vehicle_status_s &status, const bool report_fail,
+				  const bool prearm);
 	static int rcCalibrationCheck(orb_advert_t *mavlink_log_pub, bool report_fail, bool isVTOL);
 	static bool powerCheck(orb_advert_t *mavlink_log_pub, const vehicle_status_s &status, const bool report_fail,
 			       const bool prearm);

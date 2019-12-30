@@ -272,12 +272,9 @@ bool PreFlightCheck::preflightCheck(orb_advert_t *mavlink_log_pub, vehicle_statu
 
 	/* ---- AIRSPEED ---- */
 	if (checkAirspeed) {
-		int32_t optional = 0;
-		param_get(param_find("FW_ARSP_MODE"), &optional);
 
-		if (!airspeedCheck(mavlink_log_pub, status, (bool)optional, reportFailures && !failed, prearm) && !(bool)optional) {
-			failed = true;
-		}
+		failed = !airspeedCheck(mavlink_log_pub, status, reportFailures && !failed, prearm);
+
 	}
 
 	/* ---- RC CALIBRATION ---- */
