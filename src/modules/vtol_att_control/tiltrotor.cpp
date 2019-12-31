@@ -226,6 +226,9 @@ void Tiltrotor::update_transition_state()
 {
 	VtolType::update_transition_state();
 
+	// copy virtual attitude setpoint to real attitude setpoint (we use multicopter att sp)
+	memcpy(_v_att_sp, _mc_virtual_att_sp, sizeof(vehicle_attitude_setpoint_s));
+
 	float time_since_trans_start = (float)(hrt_absolute_time() - _vtol_schedule.transition_start) * 1e-6f;
 
 	if (!_flag_was_in_trans_mode) {
@@ -246,6 +249,8 @@ void Tiltrotor::update_transition_state()
 					_params->front_trans_duration;
 		}
 
+		// compensate with increased combined thrust for reduced vertical thrust due to tilt
+		Tiltrotor::thrust_compensation_for_tilt();
 
 		// at low speeds give full weight to MC
 		_mc_roll_weight = 1.0f;
@@ -329,8 +334,6 @@ void Tiltrotor::update_transition_state()
 	_mc_yaw_weight = math::constrain(_mc_yaw_weight, 0.0f, 1.0f);
 	_mc_throttle_weight = math::constrain(_mc_throttle_weight, 0.0f, 1.0f);
 
-	// copy virtual attitude setpoint to real attitude setpoint (we use multicopter att sp)
-	memcpy(_v_att_sp, _mc_virtual_att_sp, sizeof(vehicle_attitude_setpoint_s));
 }
 
 void Tiltrotor::waiting_on_tecs()
