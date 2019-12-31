@@ -411,8 +411,11 @@ VtolAttitudeControl::Run()
 			_vtol_vehicle_status.vtol_in_trans_mode = false;
 			_vtol_vehicle_status.in_transition_to_fw = false;
 
-			_vtol_type->update_mc_state();
-			_v_att_sp_pub.publish(_v_att_sp);
+			if (mc_att_sp_updated) {
+				_vtol_type->update_mc_state();
+				_v_att_sp_pub.publish(_v_att_sp);
+			}
+
 
 			break;
 
