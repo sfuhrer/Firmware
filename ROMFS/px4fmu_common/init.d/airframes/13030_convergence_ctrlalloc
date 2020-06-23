@@ -29,18 +29,18 @@ then
 
 	param set MPC_USE_HTE 0
 
-	param set VM_MASS 1.5
-	param set VM_INERTIA_XX 0.03
-	param set VM_INERTIA_YY 0.03
-	param set VM_INERTIA_ZZ 0.05
+	param set VM_MASS 0.9
+	param set VM_INERTIA_XX 0.015
+	param set VM_INERTIA_YY 0.02
+	param set VM_INERTIA_ZZ 0.04
 
 	param set CA_AIRFRAME 2
 	param set CA_METHOD 1
 	param set CA_ACT0_MIN 0.0
 	param set CA_ACT1_MIN 0.0
 	param set CA_ACT2_MIN 0.0
-	param set CA_ACT3_MIN 0.0
-	param set CA_ACT4_MIN 0.0
+	param set CA_ACT3_MIN -1.0
+	param set CA_ACT4_MIN -1.0
 	param set CA_ACT0_MAX 1.0
 	param set CA_ACT1_MAX 1.0
 	param set CA_ACT2_MAX 1.0
@@ -50,15 +50,15 @@ then
 
 	param set CA_MC_R0_PX 0.06
 	param set CA_MC_R0_PY 0.20
-	param set CA_MC_R0_CT 6.5
+	param set CA_MC_R0_CT 6
 	param set CA_MC_R0_KM 0.05
 	param set CA_MC_R1_PX 0.06
 	param set CA_MC_R1_PY -0.20
-	param set CA_MC_R1_CT 6.5
+	param set CA_MC_R1_CT 6
 	param set CA_MC_R1_KM -0.05
 	param set CA_MC_R2_PX -0.24
 	param set CA_MC_R2_PY 0.00
-	param set CA_MC_R2_CT 6.5
+	param set CA_MC_R2_CT 3
 	param set CA_MC_R2_KM -0.05
 
 
