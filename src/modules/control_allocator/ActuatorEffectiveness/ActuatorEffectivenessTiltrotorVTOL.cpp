@@ -128,7 +128,7 @@ ActuatorEffectivenessTiltrotorVTOL::setFlightPhase(const FlightPhase &flight_pha
 		const float c_t_front = 6.0f;
 		const float c_t_rear = 3.0f;
 		// const float c_m_front = 0.05f;
-		const float c_m_rear = 0.025f;
+		// const float c_m_rear = 0.025f;
 
 		// Effectiveness
 		const float tiltrotor_vtol[NUM_AXES][NUM_ACTUATORS] = {
