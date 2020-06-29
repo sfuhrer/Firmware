@@ -233,6 +233,10 @@ ControlAllocator::update_effectiveness_source()
 		case EffectivenessSource::PLANE:
 			tmp = new ActuatorEffectivenessPlane();
 			break;
+
+		case EffectivenessSource::TAILSITTER_VTOL:
+			tmp = new ActuatorEffectivenessTailsitterVTOL();
+			break;
 		}
 
 		// Replace previous source with new one
@@ -619,6 +623,10 @@ int ControlAllocator::print_status()
 
 	case EffectivenessSource::PLANE:
 		PX4_INFO("EffectivenessSource: Plane");
+		break;
+
+	case EffectivenessSource::TAILSITTER_VTOL:
+		PX4_INFO("EffectivenessSource: TAILSITTER_VTOL");
 		break;
 	}
 
