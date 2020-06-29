@@ -38,11 +38,11 @@ then
 
 	param set CA_AIRFRAME 3
 	param set CA_METHOD 1
-	param set CA_ACT0_MIN 0.0
-	param set CA_ACT1_MIN 0.0
-	param set CA_ACT2_MIN 0.0
+	param set CA_ACT0_MIN -1.0
+	param set CA_ACT1_MIN -1.0
+	param set CA_ACT2_MIN -1.0
 	param set CA_ACT3_MIN -1.0
-	param set CA_ACT4_MIN -1.0
+	param set CA_ACT4_MIN 0
 	param set CA_ACT0_MAX 1.0
 	param set CA_ACT1_MAX 1.0
 	param set CA_ACT2_MAX 1.0
@@ -50,33 +50,9 @@ then
 	param set CA_ACT4_MAX 1.0
 
 
-	param set CA_MC_R0_PX 0.06
-	param set CA_MC_R0_PY 0.20
-	param set CA_MC_R0_CT 6
-	param set CA_MC_R0_KM 0.05
-	param set CA_MC_R1_PX 0.06
-	param set CA_MC_R1_PY -0.20
-	param set CA_MC_R1_CT 6
-	param set CA_MC_R1_KM -0.05
-	param set CA_MC_R2_PX -0.24
-	param set CA_MC_R2_PY 0.00
-	param set CA_MC_R2_CT 3
-	param set CA_MC_R2_KM -0.05
-
-
 	param set FW_AIRSPD_MIN 10
 	param set FW_AIRSPD_TRIM 15
 	param set FW_AIRSPD_MAX 20
-
-	param set FW_MAN_P_MAX 55
-	param set FW_MAN_R_MAX 55
-	param set FW_R_LIM 55
-
-	param set FW_WR_FF 0.2
-	param set FW_WR_I 0.2
-	param set FW_WR_IMAX 0.8
-	param set FW_WR_P 1
-	param set FW_W_RMAX 0
 
 	# set disarmed value for the ESC
 	param set PWM_DISARMED 1000

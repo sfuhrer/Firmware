@@ -43,6 +43,17 @@
 ActuatorEffectivenessPlane::ActuatorEffectivenessPlane()
 {
 
+	float inv_scaling_sq = 1.0f;
+	const float B_plane[NUM_AXES][NUM_ACTUATORS] = {
+		{ -0.5f * inv_scaling_sq, 0.5f * inv_scaling_sq, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+		{ 0.f, 0.f, 0.5f * inv_scaling_sq, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+		{ 0.f, 0.f, 0.f, 0.5f * inv_scaling_sq, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+		{ 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+		{ 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+		{ 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f}
+	};
+	_effectiveness = matrix::Matrix<float, NUM_AXES, NUM_ACTUATORS>(B_plane);
+
 }
 
 bool
@@ -62,10 +73,19 @@ ActuatorEffectivenessPlane::updateAirspeedScaling(const float airspeed_scaling)
 	_updated = true;
 
 	float inv_scaling_sq = 1.0f / (airspeed_scaling * airspeed_scaling);
+	// const float B_plane[NUM_AXES][NUM_ACTUATORS] = {
+	// 	{ 0.f, 0.f, 0.f, 0.f, 0.f, -0.5f * inv_scaling_sq, 0.5f * inv_scaling_sq, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+	// 	{ 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.5f * inv_scaling_sq, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+	// 	{ 0.f, 0.f, 0.5f * inv_scaling_sq, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+	// 	{ 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+	// 	{ 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+	// 	{ 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f}
+	// };
+
 	const float B_plane[NUM_AXES][NUM_ACTUATORS] = {
-		{ 0.f, 0.f, 0.f, 0.f, 0.f, -0.5f * inv_scaling_sq, 0.5f * inv_scaling_sq, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
-		{ 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.5f * inv_scaling_sq, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+		{ -0.5f * inv_scaling_sq, 0.5f * inv_scaling_sq, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
 		{ 0.f, 0.f, 0.5f * inv_scaling_sq, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+		{ 0.f, 0.f, 0.f, 0.5f * inv_scaling_sq, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
 		{ 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
 		{ 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
 		{ 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f}
