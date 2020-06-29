@@ -43,12 +43,25 @@
 ActuatorEffectivenessPlane::ActuatorEffectivenessPlane()
 {
 
+	float c_t = 34.0;
+	float l_y = 0.7f; //distance cg to center of aileron
+	float A_ail = 0.6f * 0.04f;
+	float rho = 1.23;
+	float delta_max = 20 / 180 * 3.14;
+
+
+
+	float airspeed = 15.0f;
+
+
+	// float inv_scaling_sq = 1.0f / (airspeed_scaling * airspeed_scaling);
 	float inv_scaling_sq = 1.0f;
+
 	const float B_plane[NUM_AXES][NUM_ACTUATORS] = {
-		{ -0.5f * inv_scaling_sq, 0.5f * inv_scaling_sq, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+		{ 2 / 3 * airspeed *airspeed *A_ail *rho * 3.14f * delta_max * l_y, 2 / 3 * airspeed *airspeed *A_ail *rho * 3.14f * delta_max * l_y, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
 		{ 0.f, 0.f, 0.5f * inv_scaling_sq, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
-		{ 0.f, 0.f, 0.f, 0.5f * inv_scaling_sq, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
-		{ 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+		{ 0.f, 0.f, 0.f, -0.5f * inv_scaling_sq, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+		{ 0.f, 0.f, 0.f, 0.f, c_t, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
 		{ 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
 		{ 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f}
 	};
@@ -72,21 +85,23 @@ ActuatorEffectivenessPlane::updateAirspeedScaling(const float airspeed_scaling)
 {
 	_updated = true;
 
-	float inv_scaling_sq = 1.0f / (airspeed_scaling * airspeed_scaling);
-	// const float B_plane[NUM_AXES][NUM_ACTUATORS] = {
-	// 	{ 0.f, 0.f, 0.f, 0.f, 0.f, -0.5f * inv_scaling_sq, 0.5f * inv_scaling_sq, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
-	// 	{ 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.5f * inv_scaling_sq, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
-	// 	{ 0.f, 0.f, 0.5f * inv_scaling_sq, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
-	// 	{ 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
-	// 	{ 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
-	// 	{ 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f}
-	// };
+	float c_t = 34.0;
+	float l_y = 0.7f; //distance cg to center of aileron
+	float A_ail = 0.6f * 0.04f;
+	float rho = 1.23;
+	float delta_max = 20 / 180 * 3.14;
+
+	float airspeed = 15.0f;
+
+
+	// float inv_scaling_sq = 1.0f / (airspeed_scaling * airspeed_scaling);
+	float inv_scaling_sq = 1.0f;
 
 	const float B_plane[NUM_AXES][NUM_ACTUATORS] = {
-		{ -0.5f * inv_scaling_sq, 0.5f * inv_scaling_sq, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+		{ 2 / 3 * airspeed *airspeed *A_ail *rho * 3.14f * delta_max * l_y, 2 / 3 * airspeed *airspeed *A_ail *rho * 3.14f * delta_max * l_y, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
 		{ 0.f, 0.f, 0.5f * inv_scaling_sq, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
-		{ 0.f, 0.f, 0.f, 0.5f * inv_scaling_sq, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
-		{ 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+		{ 0.f, 0.f, 0.f, -0.5f * inv_scaling_sq, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+		{ 0.f, 0.f, 0.f, 0.f, c_t, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
 		{ 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
 		{ 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f}
 	};
