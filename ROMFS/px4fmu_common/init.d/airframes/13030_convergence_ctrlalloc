@@ -48,21 +48,10 @@ then
 	param set CA_ACT4_MAX 1.0
 
 
-	param set CA_MC_R0_PX 0.06
-	param set CA_MC_R0_PY 0.20
-	param set CA_MC_R0_CT 6
-	param set CA_MC_R0_KM 0.05
-	param set CA_MC_R1_PX 0.06
-	param set CA_MC_R1_PY -0.20
-	param set CA_MC_R1_CT 6
-	param set CA_MC_R1_KM -0.05
-	param set CA_MC_R2_PX -0.24
-	param set CA_MC_R2_PY 0.00
-	param set CA_MC_R2_CT 3
-	param set CA_MC_R2_KM -0.05
 
-
-	param set CBRK_AIRSPD_CHK 162128
+	param set SYS_USE_IO 0
+	param set CBRK_IO_SAFETY 22027
+	param set COM_PREARM_MODE 0
 
 	param set FW_ARSP_MODE 2
 
@@ -101,8 +90,5 @@ then
 	param set VT_TYPE 1
 fi
 
-set MIXER direct
+set MIXER simple_direct
 set PWM_OUT 123
-
-set MIXER_AUX direct_aux
-set PWM_AUX_OUT 123
