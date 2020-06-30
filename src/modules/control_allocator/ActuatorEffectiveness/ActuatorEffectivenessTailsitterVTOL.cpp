@@ -86,24 +86,35 @@ ActuatorEffectivenessTailsitterVTOL::setFlightPhase(const FlightPhase &flight_ph
 	// }
 
 
-	// Trim: half throttle, elevons centered
-	_trim(0) = 0.5f; //right
-	_trim(1) = 0.5f; // left
+	// Trim: half throttle
+	// const float thrust_hover = 1.25f;
 
 	const float l_y_motors = 0.145f;
 	const float l_y_elevons = 0.145f;
 	const float l_z_elevons = 0.09f;
-	const float c_t = 6.0f;
+	const float c_t = 2.5f;
+
+	const float A_elevon = 0.19f * 0.06f;
+	// const float A_p = 0.0123;
+	const float delta_max = 30;
+	const float rho = 1.22;
+
+	float u = 0.0f;
+	float v = 13.0f;
+
+	float c_F_z = 2.f * 3.14f * A_elevon * rho * (v + u) * (v + u) * delta_max / 180.0f * 3.14f;
+	c_F_z = 1.0f;
+
 	// const float c_m = 0.025f;
 
 	// Effectiveness
 	const float tiltrotor_vtol[NUM_AXES][NUM_ACTUATORS] = {
 		{ -c_t * l_y_motors, c_t * l_y_motors, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
-		{ 0.f, 0.f, 1.0f * l_z_elevons, 1.0f * l_z_elevons, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
-		{ 0.f, 0.f, 1.0f * l_y_elevons, -1.0f * l_y_elevons, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+		{ 0.f, 0.f, -c_F_z * l_z_elevons, c_F_z * l_z_elevons, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+		{ 0.f, 0.f, c_F_z * l_y_elevons, c_F_z * l_y_elevons, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
 		{ 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
-		{ 0.f,  0.f,  0.f,  0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
-		{ c_t, c_t, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f}
+		{ 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+		{ -c_t, -c_t, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f}
 	};
 
 	_effectiveness = matrix::Matrix<float, NUM_AXES, NUM_ACTUATORS>(tiltrotor_vtol);
