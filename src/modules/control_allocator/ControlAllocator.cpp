@@ -330,8 +330,8 @@ ControlAllocator::Run()
 		_airspeed_sub.update(&airspeed);
 
 		if (PX4_ISFINITE(airspeed.indicated_airspeed_m_s)) {
-			const float airspeed_scaling = _param_airspeed_ias_trim.get() / math::max(airspeed.indicated_airspeed_m_s, 3.0f);
-			_actuator_effectiveness->updateAirspeedScaling(airspeed_scaling);
+			// const float airspeed_scaling = _param_airspeed_ias_trim.get() / math::max(airspeed.indicated_airspeed_m_s, 3.0f);
+			_actuator_effectiveness->updateAirspeedScaling(math::max(airspeed.indicated_airspeed_m_s, 3.0f));
 		}
 	}
 

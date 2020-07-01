@@ -44,23 +44,42 @@ ActuatorEffectivenessPlane::ActuatorEffectivenessPlane()
 {
 
 	float c_t = 34.0;
-	float l_y = 0.7f; //distance cg to center of aileron
-	float A_ail = 0.6f * 0.04f;
-	float rho = 1.23;
-	float delta_max = 20 / 180 * 3.14;
+	// float l_y = 0.7f; //distance cg to center of aileron
+	// float l_x = 0.7f; //distance cg to center of elevator and rudder
 
+	// float A_ail = 0.6f * 0.04f;
+	// float A_elev = 0.5f * 0.035f;
+	// float A_rud = 0.18f * 0.04f;
 
+	// float rho = 1.23;
 
-	float airspeed = 15.0f;
+	// float delta_ail_max = 20 / 180 * 3.14;
+	// float delta_elev_max = 20 / 180 * 3.14;
+	// float delta_rud_max = 30 / 180 * 3.14;
 
+	// float airspeed = 15.0f;
 
 	// float inv_scaling_sq = 1.0f / (airspeed_scaling * airspeed_scaling);
-	float inv_scaling_sq = 1.0f;
+	// float inv_scaling_sq = 1.0f;
+
+	// const float B_plane[NUM_AXES][NUM_ACTUATORS] = {
+	// 	{ 2 * airspeed *airspeed *A_ail *rho * 3.14f * delta_ail_max * l_y, 2 * airspeed *airspeed *A_ail *rho * 3.14f * delta_ail_max * l_y, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+	// 	{ 0.f, 0.f, 2 * airspeed *airspeed *A_elev *rho * 3.14f * delta_elev_max * l_x, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+	// 	{ 0.f, 0.f, 0.f, -2 * airspeed *airspeed *A_rud *rho * 3.14f * delta_rud_max * l_x, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+	// 	{ 0.f, 0.f, 0.f, 0.f, c_t, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+	// 	{ 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+	// 	{ 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f}
+	// };
+
+	float c_ail = 7.5f; // with u = 13
+	float c_elev = 5.5f; // with u = 13
+	float c_rud = 3.5f; // with u = 13
+
 
 	const float B_plane[NUM_AXES][NUM_ACTUATORS] = {
-		{ 2 / 3 * airspeed *airspeed *A_ail *rho * 3.14f * delta_max * l_y, 2 / 3 * airspeed *airspeed *A_ail *rho * 3.14f * delta_max * l_y, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
-		{ 0.f, 0.f, 0.5f * inv_scaling_sq, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
-		{ 0.f, 0.f, 0.f, -0.5f * inv_scaling_sq, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+		{ c_ail, c_ail, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+		{ 0.f, 0.f, c_elev, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+		{ 0.f, 0.f, 0.f, c_rud, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
 		{ 0.f, 0.f, 0.f, 0.f, c_t, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
 		{ 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
 		{ 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f}
@@ -81,26 +100,21 @@ ActuatorEffectivenessPlane::update()
 }
 
 void
-ActuatorEffectivenessPlane::updateAirspeedScaling(const float airspeed_scaling)
+ActuatorEffectivenessPlane::updateAirspeedScaling(const float airspeed)
 {
 	_updated = true;
 
 	float c_t = 34.0;
-	float l_y = 0.7f; //distance cg to center of aileron
-	float A_ail = 0.6f * 0.04f;
-	float rho = 1.23;
-	float delta_max = 20 / 180 * 3.14;
 
-	float airspeed = 15.0f;
+	float c_ail = 0.044;
+	float c_elev = 0.033f;
+	float c_rud = 0.021f;
 
-
-	// float inv_scaling_sq = 1.0f / (airspeed_scaling * airspeed_scaling);
-	float inv_scaling_sq = 1.0f;
 
 	const float B_plane[NUM_AXES][NUM_ACTUATORS] = {
-		{ 2 / 3 * airspeed *airspeed *A_ail *rho * 3.14f * delta_max * l_y, 2 / 3 * airspeed *airspeed *A_ail *rho * 3.14f * delta_max * l_y, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
-		{ 0.f, 0.f, 0.5f * inv_scaling_sq, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
-		{ 0.f, 0.f, 0.f, -0.5f * inv_scaling_sq, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+		{ c_ail *airspeed * airspeed, c_ail *airspeed * airspeed, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+		{ 0.f, 0.f, c_elev *airspeed * airspeed, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+		{ 0.f, 0.f, 0.f, c_rud *airspeed * airspeed, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
 		{ 0.f, 0.f, 0.f, 0.f, c_t, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
 		{ 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
 		{ 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f}
