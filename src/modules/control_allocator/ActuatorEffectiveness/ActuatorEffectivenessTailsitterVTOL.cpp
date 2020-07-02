@@ -65,25 +65,25 @@ ActuatorEffectivenessTailsitterVTOL::setFlightPhase(const FlightPhase &flight_ph
 	_updated = true;
 
 	// // Trim
-	// float airspeed = 0.0f;
+	float airspeed = 0.0f;
 
-	// switch (_flight_phase) {
-	// case FlightPhase::HOVER_FLIGHT:  {
-	// 		airspeed = 0.0f;
-	// 		break;
-	// 	}
+	switch (_flight_phase) {
+	case FlightPhase::HOVER_FLIGHT:  {
+			airspeed = 0.0f;
+			break;
+		}
 
-	// case FlightPhase::FORWARD_FLIGHT: {
-	// 		airspeed = 12.0f;
-	// 		break;
-	// 	}
+	case FlightPhase::FORWARD_FLIGHT: {
+			airspeed = 12.0f;
+			break;
+		}
 
-	// case FlightPhase::TRANSITION_FF_TO_HF:
-	// case FlightPhase::TRANSITION_HF_TO_FF: {
-	// 		airspeed = 8.f;
-	// 		break;
-	// 	}
-	// }
+	case FlightPhase::TRANSITION_FF_TO_HF:
+	case FlightPhase::TRANSITION_HF_TO_FF: {
+			airspeed = 8.f;
+			break;
+		}
+	}
 
 
 	// Trim: half throttle
@@ -99,10 +99,9 @@ ActuatorEffectivenessTailsitterVTOL::setFlightPhase(const FlightPhase &flight_ph
 	const float delta_max = 30;
 	const float rho = 1.22;
 
-	float u = 0.0f;
 	float v = 13.0f;
 
-	float c_F_z = 2.f * 3.14f * A_elevon * rho * (v + u) * (v + u) * delta_max / 180.0f * 3.14f;
+	float c_F_z = 2.f * 3.14f * A_elevon * rho * (v + airspeed) * (v + airspeed) * delta_max / 180.0f * 3.14f;
 	c_F_z = 1.0f;
 
 	// const float c_m = 0.025f;
