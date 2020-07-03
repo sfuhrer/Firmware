@@ -765,3 +765,10 @@ PARAM_DEFINE_FLOAT(FW_DTRIM_R_FLPS, 0.0f);
  * @increment 0.01
  */
 PARAM_DEFINE_FLOAT(FW_DTRIM_P_FLPS, 0.0f);
+
+/**
+ * Aileron 1 on/off.
+ *
+ * @group Control Allocation
+ */
+PARAM_DEFINE_FLOAT(CA_FW_AIL1_ON, 1.0f);

@@ -40,7 +40,8 @@
 
 #include "ActuatorEffectivenessPlane.hpp"
 
-ActuatorEffectivenessPlane::ActuatorEffectivenessPlane()
+ActuatorEffectivenessPlane::ActuatorEffectivenessPlane():
+	ModuleParams(nullptr)
 {
 
 	float c_t = 34.0;
@@ -91,12 +92,20 @@ ActuatorEffectivenessPlane::ActuatorEffectivenessPlane()
 bool
 ActuatorEffectivenessPlane::update()
 {
-	if (_updated) {
-		_updated = false;
-		return true;
+	bool updated = false;
+
+	// Check if parameters have changed
+	if (_parameter_update_sub.updated()) {
+		// clear update
+		parameter_update_s param_update;
+		_parameter_update_sub.copy(&param_update);
+
+		updateParams();
+
+		updated = true;
 	}
 
-	return false;
+	return updated;
 }
 
 void
@@ -109,7 +118,6 @@ ActuatorEffectivenessPlane::updateAirspeedScaling(const float airspeed)
 	float c_ail = 0.044;
 	float c_elev = 0.033f;
 	float c_rud = 0.021f;
-
 
 	const float B_plane[NUM_AXES][NUM_ACTUATORS] = {
 		{ c_ail *airspeed * airspeed, c_ail *airspeed * airspeed, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
