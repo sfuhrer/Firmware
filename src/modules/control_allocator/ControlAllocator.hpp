@@ -164,7 +164,8 @@ private:
 	hrt_abstime _timestamp_sample{0};
 
 	DEFINE_PARAMETERS(
-		(ParamFloat<px4::params::FW_AIRSPD_TRIM>) _param_airspeed_ias_trim,
+		(ParamFloat<px4::params::FW_AIRSPD_MIN>) _param_airspeed_min,
+		(ParamFloat<px4::params::FW_AIRSPD_MAX>) _param_airspeed_max,
 		(ParamInt<px4::params::CA_AIRFRAME>) _param_ca_airframe,
 		(ParamInt<px4::params::CA_METHOD>) _param_ca_method,
 		(ParamBool<px4::params::CA_BAT_SCALE_EN>) _param_ca_bat_scale_en,
