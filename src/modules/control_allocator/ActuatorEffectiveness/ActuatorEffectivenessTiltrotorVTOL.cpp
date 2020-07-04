@@ -156,8 +156,8 @@ ActuatorEffectivenessTiltrotorVTOL::updateAirspeedTilt(const float airspeed, con
 	const float l_y_front = 0.20f;
 	const float c_t_front = 8.f;
 	const float c_t_rear = 4.f;
-	// const float c_m_front = 0.05f;
-	// const float c_m_rear = 0.025f;
+	const float c_m_front = 0.05f;
+	const float c_m_rear = 0.025f;
 
 	float tilt_rad = tilt + 0.01f;
 	// tilt_rad = 0.f;
@@ -167,7 +167,7 @@ ActuatorEffectivenessTiltrotorVTOL::updateAirspeedTilt(const float airspeed, con
 	const float tiltrotor_vtol[NUM_AXES][NUM_ACTUATORS] = {
 		{-c_t_front *l_y_front * cosf(tilt_rad), c_t_front *l_y_front * cosf(tilt_rad), 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
 		{ c_t_front *l_x_front * cosf(tilt_rad), c_t_front *l_x_front * cosf(tilt_rad),  -c_t_rear *l_x_rear * 1.0f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
-		{ -c_t_front *l_y_front * sinf(tilt_rad), c_t_front *l_y_front * sinf(tilt_rad), 0.0f, 0.f, -c_t_front *l_y_front * 0.5f, c_t_front *l_y_front * 0.5f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+		{ -c_t_front *l_y_front * sinf(tilt_rad) - c_m_front, c_t_front *l_y_front * sinf(tilt_rad) + c_m_front, c_m_rear, 0.f, -c_t_front *l_y_front * 0.5f, c_t_front *l_y_front * 0.5f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
 		{ 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
 		{ 0.f,  0.f,  0.f,  0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
 		{ -c_t_front * cosf(tilt_rad), -c_t_front * cosf(tilt_rad), -c_t_rear, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f}
