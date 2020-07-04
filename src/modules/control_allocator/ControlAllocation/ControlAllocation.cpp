@@ -72,7 +72,9 @@ ControlAllocation::setEffectivenessMatrix(
 {
 	_effectiveness = effectiveness;
 	_actuator_trim = clipActuatorSetpoint(actuator_trim);
-	_control_trim = _effectiveness * _actuator_trim;
+	_actuator_trim(4) = _tilt_trim;
+	_actuator_trim(5) = _tilt_trim;
+	// _control_trim = _effectiveness * _actuator_trim;
 }
 
 const matrix::Matrix<float, ControlAllocation::NUM_AXES, ControlAllocation::NUM_ACTUATORS> &

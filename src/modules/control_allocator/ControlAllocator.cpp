@@ -337,6 +337,7 @@ ControlAllocator::Run()
 		// PX4_ERR("actuator_controls_1->control[4]: %f", (double)actuator_controls_1->control[4]);
 		float div = _thrust_sp(0) / (-_thrust_sp(2) + 0.001f);
 		float tilt = math::constrain(atanf(div), 0.0f, 0.8f);
+		_control_allocation->set_tilt_trim(tilt);
 		// float tilt = math::constrain()
 		// float tilt = 0.5f;
 
