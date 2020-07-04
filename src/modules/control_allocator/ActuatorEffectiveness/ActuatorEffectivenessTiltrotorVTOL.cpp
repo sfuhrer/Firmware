@@ -144,12 +144,32 @@ ActuatorEffectivenessTiltrotorVTOL::setFlightPhase(const FlightPhase &flight_pha
 		_effectiveness = matrix::Matrix<float, NUM_AXES, NUM_ACTUATORS>(tiltrotor_vtol);
 	}
 
+}
 
-	// // Temporarily disable a few controls (WIP)
-	// for (size_t j = 4; j < 8; j++) {
-	// 	_effectiveness(3, j) = 0.0f;
-	// 	_effectiveness(4, j) = 0.0f;
-	// 	_effectiveness(5, j) = 0.0f;
-	// }
+void
+ActuatorEffectivenessTiltrotorVTOL::updateAirspeedTilt(const float airspeed, const float tilt)
+{
+	_updated = true;
 
+	const float l_x_front = 0.06f;
+	const float l_x_rear = 0.24f;
+	const float l_y_front = 0.20f;
+	const float c_t_front = 8.f;
+	const float c_t_rear = 4.f;
+	// const float c_m_front = 0.05f;
+	// const float c_m_rear = 0.025f;
+
+	float tilt_rad = tilt;
+	// tilt_rad = 0.f;
+	// -c_t_front *l_y_front * sinf(tilt_rad), c_t_front *l_y_front * sinf(tilt_rad)
+
+	const float tiltrotor_vtol[NUM_AXES][NUM_ACTUATORS] = {
+		{-c_t_front *l_y_front * cosf(tilt_rad), c_t_front *l_y_front * cosf(tilt_rad), 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+		{ c_t_front *l_x_front * cosf(tilt_rad), c_t_front *l_x_front * cosf(tilt_rad),  -c_t_rear *l_x_rear * 1.0f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+		{ 0.f, 0.f, 0.0f, 0.f, -c_t_front *l_y_front * 0.5f, c_t_front *l_y_front * 0.5f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+		{ 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+		{ 0.f,  0.f,  0.f,  0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f},
+		{ -c_t_front * cosf(tilt_rad), -c_t_front * cosf(tilt_rad), -c_t_rear, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f}
+	};
+	_effectiveness = matrix::Matrix<float, NUM_AXES, NUM_ACTUATORS>(tiltrotor_vtol);
 }

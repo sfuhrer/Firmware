@@ -79,7 +79,7 @@ public:
 		_flight_phase = flight_phase;
 	};
 
-	virtual void updateAirspeedScaling(const float airspeed_scaling) {};
+	virtual void updateAirspeedTilt(const float airspeed, const float tilt) {};
 
 	/**
 	 * Get the control effectiveness matrix

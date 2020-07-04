@@ -109,7 +109,7 @@ ActuatorEffectivenessPlane::update()
 }
 
 void
-ActuatorEffectivenessPlane::updateAirspeedScaling(const float airspeed)
+ActuatorEffectivenessPlane::updateAirspeedTilt(const float airspeed, const float tilt)
 {
 	_updated = true;
 

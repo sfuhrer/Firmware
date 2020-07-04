@@ -165,7 +165,7 @@ FixedwingAttitudeControl::vehicle_manual_poll()
 								       -radians(_param_fw_man_p_max.get()), radians(_param_fw_man_p_max.get()));
 
 					_att_sp.yaw_body = 0.0f;
-					_att_sp.thrust_body[0] = _manual.z;
+					_att_sp.thrust_body[1] = _manual.z;
 
 					Quatf q(Eulerf(_att_sp.roll_body, _att_sp.pitch_body, _att_sp.yaw_body));
 					q.copyTo(_att_sp.q_d);
@@ -182,7 +182,7 @@ FixedwingAttitudeControl::vehicle_manual_poll()
 					_rates_sp.roll = _manual.y * radians(_param_fw_acro_x_max.get());
 					_rates_sp.pitch = -_manual.x * radians(_param_fw_acro_y_max.get());
 					_rates_sp.yaw = _manual.r * radians(_param_fw_acro_z_max.get());
-					_rates_sp.thrust_body[0] = _manual.z;
+					_rates_sp.thrust_body[1] = _manual.z;
 
 					_rate_sp_pub.publish(_rates_sp);
 
@@ -202,7 +202,7 @@ void
 FixedwingAttitudeControl::vehicle_attitude_setpoint_poll()
 {
 	if (_att_sp_sub.update(&_att_sp)) {
-		_rates_sp.thrust_body[0] = _att_sp.thrust_body[0];
+		_rates_sp.thrust_body[1] = _att_sp.thrust_body[1];
 		_rates_sp.thrust_body[1] = _att_sp.thrust_body[1];
 		_rates_sp.thrust_body[2] = _att_sp.thrust_body[2];
 	}
@@ -552,8 +552,8 @@ void FixedwingAttitudeControl::Run()
 					}
 
 					/* throttle passed through if it is finite and if no engine failure was detected */
-					_actuators.control[actuator_controls_s::INDEX_THROTTLE] = (PX4_ISFINITE(_att_sp.thrust_body[0])
-							&& !_vehicle_status.engine_failure) ? _att_sp.thrust_body[0] : 0.0f;
+					_actuators.control[actuator_controls_s::INDEX_THROTTLE] = (PX4_ISFINITE(_att_sp.thrust_body[1])
+							&& !_vehicle_status.engine_failure) ? _att_sp.thrust_body[1] : 0.0f;
 
 					/* scale effort by battery status */
 					if (_param_fw_bat_scale_en.get() &&
@@ -601,8 +601,8 @@ void FixedwingAttitudeControl::Run()
 				float yaw_u = _yaw_ctrl.control_bodyrate(control_input);
 				_actuators.control[actuator_controls_s::INDEX_YAW] = (PX4_ISFINITE(yaw_u)) ? yaw_u + trim_yaw : trim_yaw;
 
-				_actuators.control[actuator_controls_s::INDEX_THROTTLE] = PX4_ISFINITE(_rates_sp.thrust_body[0]) ?
-						_rates_sp.thrust_body[0] : 0.0f;
+				_actuators.control[actuator_controls_s::INDEX_THROTTLE] = PX4_ISFINITE(_rates_sp.thrust_body[1]) ?
+						_rates_sp.thrust_body[1] : 0.0f;
 			}
 
 			// rate_ctrl_status_s rate_ctrl_status{};

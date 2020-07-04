@@ -64,7 +64,7 @@ public:
 	 *
 	 * @param Airspeed scaling
 	 */
-	void updateAirspeedScaling(const float airspeed_scaling) override;
+	void updateAirspeedTilt(const float airspeed, const float tilt) override;
 
 protected:
 	bool _updated{false};

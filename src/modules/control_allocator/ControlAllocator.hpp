@@ -150,6 +150,7 @@ private:
 	uORB::Subscription _battery_status_sub{ORB_ID(battery_status)};			/**< battery status subscription */
 	uORB::Subscription _airspeed_sub{ORB_ID(airspeed_validated)};				/**< airspeed subscription */
 	uORB::Subscription _vehicle_status_sub{ORB_ID(vehicle_status)};
+	uORB::Subscription _actuator_controls_1_sub{ORB_ID(actuator_controls_1)};
 
 	matrix::Vector3f _torque_sp;
 	matrix::Vector3f _thrust_sp;

@@ -296,43 +296,54 @@ ControlAllocator::Run()
 		parameters_updated();
 	}
 
-	if (_vehicle_status_sub.updated()) {
-		vehicle_status_s vehicle_status = {};
-		_vehicle_status_sub.update(&vehicle_status);
+	// if (_vehicle_status_sub.updated()) {
+	// 	vehicle_status_s vehicle_status = {};
+	// 	_vehicle_status_sub.update(&vehicle_status);
 
-		ActuatorEffectiveness::FlightPhase flight_phase{ActuatorEffectiveness::FlightPhase::HOVER_FLIGHT};
+	// 	ActuatorEffectiveness::FlightPhase flight_phase{ActuatorEffectiveness::FlightPhase::HOVER_FLIGHT};
 
-		// Check if the current flight phase is HOVER or FIXED_WING
-		if (vehicle_status.vehicle_type == vehicle_status_s::VEHICLE_TYPE_ROTARY_WING) {
-			flight_phase = ActuatorEffectiveness::FlightPhase::HOVER_FLIGHT;
+	// 	// Check if the current flight phase is HOVER or FIXED_WING
+	// 	if (vehicle_status.vehicle_type == vehicle_status_s::VEHICLE_TYPE_ROTARY_WING) {
+	// 		flight_phase = ActuatorEffectiveness::FlightPhase::HOVER_FLIGHT;
 
-		} else {
-			flight_phase = ActuatorEffectiveness::FlightPhase::FORWARD_FLIGHT;
-		}
+	// 	} else {
+	// 		flight_phase = ActuatorEffectiveness::FlightPhase::FORWARD_FLIGHT;
+	// 	}
 
-		// Special cases for VTOL in transition
-		if (vehicle_status.is_vtol && vehicle_status.in_transition_mode) {
-			if (vehicle_status.in_transition_to_fw) {
-				flight_phase = ActuatorEffectiveness::FlightPhase::TRANSITION_HF_TO_FF;
+	// // Special cases for VTOL in transition
+	// if (vehicle_status.is_vtol && vehicle_status.in_transition_mode) {
+	// 	if (vehicle_status.in_transition_to_fw) {
+	// 		flight_phase = ActuatorEffectiveness::FlightPhase::TRANSITION_HF_TO_FF;
 
-			} else {
-				flight_phase = ActuatorEffectiveness::FlightPhase::TRANSITION_FF_TO_HF;
-			}
-		}
+	// 	} else {
+	// 		flight_phase = ActuatorEffectiveness::FlightPhase::TRANSITION_FF_TO_HF;
+	// 	}
+	// }
 
-		// Forward to effectiveness source
-		_actuator_effectiveness->setFlightPhase(flight_phase);
-	}
+	// Forward to effectiveness source
+	// _actuator_effectiveness->setFlightPhase(flight_phase);
+	// }
 
 	if (_airspeed_sub.updated()) {
 		airspeed_validated_s airspeed = {};
 
 		_airspeed_sub.update(&airspeed);
 
+		actuator_controls_s *actuator_controls_1;
+
+		_actuator_controls_1_sub.update(&actuator_controls_1);
+
+		// float tilt = (float)actuator_controls_1->control[4];
+		// PX4_ERR("actuator_controls_1->control[4]: %f", (double)actuator_controls_1->control[4]);
+		float div = _thrust_sp(0) / (-_thrust_sp(2) + 0.001f);
+		float tilt = math::constrain(atanf(div), 0.0f, 0.8f);
+		// float tilt = math::constrain()
+		// float tilt = 0.5f;
+
 		if (PX4_ISFINITE(airspeed.equivalent_airspeed_m_s)) {
 			float used_airspeed = math::constrain(airspeed.equivalent_airspeed_m_s, _param_airspeed_min.get(),
 							      _param_airspeed_max.get());
-			_actuator_effectiveness->updateAirspeedScaling(used_airspeed);
+			_actuator_effectiveness->updateAirspeedTilt(used_airspeed, tilt);
 		}
 	}
 
