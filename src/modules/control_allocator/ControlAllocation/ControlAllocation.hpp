@@ -98,6 +98,8 @@ public:
 	 */
 	virtual void allocate() = 0;
 
+	virtual matrix::Matrix<float, NUM_ACTUATORS, NUM_AXES> getMixMatrix() = 0;
+
 	/**
 	 * Set actuator failure flag
 	 * This prevents a change of the scaling in the matrix normalization step

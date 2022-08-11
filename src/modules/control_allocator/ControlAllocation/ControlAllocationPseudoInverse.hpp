@@ -58,6 +58,8 @@ public:
 				    const ActuatorVector &actuator_trim, const ActuatorVector &linearization_point, int num_actuators,
 				    bool update_normalization_scale) override;
 
+	matrix::Matrix<float, NUM_ACTUATORS, NUM_AXES> getMixMatrix() override {return _mix; }
+
 protected:
 	matrix::Matrix<float, NUM_ACTUATORS, NUM_AXES> _mix;
 
