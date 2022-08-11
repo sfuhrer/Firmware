@@ -803,7 +803,8 @@ int ControlAllocator::print_status()
 		const matrix::Matrix<float, num_actuators, NUM_AXES> mix_sliced(mix_normalized.slice<num_actuators, NUM_AXES>(0, 0));
 
 		PX4_INFO("  Effectiveness.T (sliced) =");
-		effectiveness_sliced_transposed.print();
+		// effectiveness_sliced_transposed.print();
+		effectiveness.T().printRelevantRows();
 
 		PX4_INFO(" Mixer matrix normalized (sliced) =");
 		mix_sliced.print();
