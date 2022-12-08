@@ -130,6 +130,9 @@ private:
 	float _groundspeed{0.f};
 	bool _in_fw_or_transition_wo_tailsitter_transition{false}; // only run the FW attitude controller in these states
 
+	float _pitch_ramp_last{0.f};
+	float _throttle_ramp_last{0.f};
+
 	DEFINE_PARAMETERS(
 		(ParamFloat<px4::params::FW_AIRSPD_MAX>) _param_fw_airspd_max,
 		(ParamFloat<px4::params::FW_AIRSPD_MIN>) _param_fw_airspd_min,
@@ -155,7 +158,9 @@ private:
 		(ParamFloat<px4::params::FW_WR_IMAX>) _param_fw_wr_imax,
 		(ParamFloat<px4::params::FW_WR_P>) _param_fw_wr_p,
 
-		(ParamFloat<px4::params::FW_Y_RMAX>) _param_fw_y_rmax
+		(ParamFloat<px4::params::FW_Y_RMAX>) _param_fw_y_rmax,
+
+		(ParamInt<px4::params::FW_SYSID_RAMP_EN>) _param_sysid_ramp_en
 	)
 
 	ECL_RollController _roll_ctrl;
@@ -164,7 +169,7 @@ private:
 	ECL_WheelController _wheel_ctrl;
 
 	void parameters_update();
-	void vehicle_manual_poll(const float yaw_body);
+	void vehicle_manual_poll(const float yaw_body, const float dt);
 	void vehicle_attitude_setpoint_poll();
 	void vehicle_land_detected_poll();
 	float get_airspeed_constrained();

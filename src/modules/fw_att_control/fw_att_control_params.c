@@ -256,3 +256,16 @@ PARAM_DEFINE_FLOAT(FW_PSP_OFF, 0.0f);
  * @group FW Attitude Control
  */
 PARAM_DEFINE_FLOAT(FW_MAN_YR_MAX, 30.f);
+
+/**
+ * Enable SYS ID ramps
+ *
+ * Activated as long as aux1 is at 1.
+ *
+ * @value 0 Disabled
+ * @value 1 Pitch ramp from current pitch down, 0 thrust
+ * @value 2 Pitch ramp from current pitch up, 0 thrust
+ * @value 3 Throttle ramp from 0 up, level flight
+ * @group FW Attitude Control
+ */
+PARAM_DEFINE_INT32(FW_SYSID_RAMP_EN, 0);

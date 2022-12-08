@@ -85,7 +85,7 @@ FixedwingAttitudeControl::parameters_update()
 }
 
 void
-FixedwingAttitudeControl::vehicle_manual_poll(const float yaw_body)
+FixedwingAttitudeControl::vehicle_manual_poll(const float yaw_body, const float dt)
 {
 	if (_vcontrol_mode.flag_control_manual_enabled && _in_fw_or_transition_wo_tailsitter_transition) {
 
@@ -105,6 +105,29 @@ FixedwingAttitudeControl::vehicle_manual_poll(const float yaw_body)
 
 				_att_sp.yaw_body = yaw_body; // yaw is not controlled, so set setpoint to current yaw
 				_att_sp.thrust_body[0] = (_manual_control_setpoint.throttle + 1.f) * .5f;
+
+				if (_param_sysid_ramp_en.get() == 1 && _manual_control_setpoint.aux1 > 0.8f) { // use .yaw if aux1 is unavailabe
+						const float pitch_ramp_gradient = radians(0.8f); // 0.8deg/s ramp gradient
+						_att_sp.pitch_body = _pitch_ramp_last - pitch_ramp_gradient * dt;
+						_att_sp.thrust_body[0] = 0.f; // gliding
+						_pitch_ramp_last = _att_sp.pitch_body;
+
+				} else if (_param_sysid_ramp_en.get() == 2 && _manual_control_setpoint.aux1 > 0.8f) { // use .yaw if aux1 is unavailabe
+						const float pitch_ramp_gradient = radians(0.8f); // 0.8deg/s ramp gradient
+						_att_sp.pitch_body = _pitch_ramp_last + pitch_ramp_gradient * dt;
+						_att_sp.thrust_body[0] = 0.f; // gliding
+						_pitch_ramp_last = _att_sp.pitch_body;
+
+				} else if (_param_sysid_ramp_en.get() == 3 && _manual_control_setpoint.aux1 > 0.8f) {
+						const float throttle_ramp_gradient = 2.f; // %/s throttle gradient
+						_att_sp.thrust_body[0] = _throttle_ramp_last + throttle_ramp_gradient * 0.01f * dt;
+						_att_sp.pitch_body = radians(_param_fw_psp_off.get()); // set pitch set to trim pitch
+						_throttle_ramp_last = _att_sp.thrust_body[0];
+
+				} else {
+						_pitch_ramp_last = _att_sp.pitch_body;
+						_throttle_ramp_last = _manual_control_setpoint.throttle;
+				}
 
 				Quatf q(Eulerf(_att_sp.roll_body, _att_sp.pitch_body, _att_sp.yaw_body));
 				q.copyTo(_att_sp.q_d);
@@ -258,7 +281,7 @@ void FixedwingAttitudeControl::Run()
 
 		const matrix::Eulerf euler_angles(_R);
 
-		vehicle_manual_poll(euler_angles.psi());
+		vehicle_manual_poll(euler_angles.psi(), dt);
 
 		vehicle_attitude_setpoint_poll();
 
