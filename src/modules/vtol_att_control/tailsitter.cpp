@@ -205,7 +205,8 @@ void Tailsitter::update_transition_state()
 	if (_vtol_mode == vtol_mode::TRANSITION_FRONT_P1) {
 
 		// calculate pitching rate - and constrain to at least 0.1s transition time
-		const float trans_pitch_rate = M_PI_2_F / math::max(_param_vt_f_trans_dur.get(), 0.1f); // could introduce VT_TS_TILT_TRANS
+		const float trans_pitch_rate = M_PI_2_F / math::max(_param_vt_f_trans_dur.get(), // could put trans dur and min tm together
+					       0.1f); // could introduce VT_TS_TILT_TRANS
 
 		if (tilt < M_PI_2_F - math::radians(_param_fw_psp_off.get())) { // could introduce VT_TS_TILT_TRANS
 			_q_trans_sp = Quatf(AxisAnglef(_trans_rot_axis,
@@ -315,5 +316,6 @@ bool Tailsitter::isFrontTransitionCompleted()
 	// tailsitter only: add check pitch angle
 	const float pitch = Eulerf(Quatf(_v_att->q)).theta();
 
-	return VtolType::isFrontTransitionCompletedBase() && pitch <= PITCH_THRESHOLD_AUTO_TRANSITION_TO_FW; // could introduce VT_TS_TILT_TRANS - 5°
+	return VtolType::isFrontTransitionCompletedBase()
+	       && pitch <= PITCH_THRESHOLD_AUTO_TRANSITION_TO_FW; // could introduce VT_TS_TILT_TRANS - 5°
 }
