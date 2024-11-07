@@ -284,9 +284,9 @@ VtolAttitudeControl::Run()
 		return;
 	}
 
-#if !defined(ENABLE_LOCKSTEP_SCHEDULER)
-
 	const hrt_abstime now = hrt_absolute_time();
+
+#if !defined(ENABLE_LOCKSTEP_SCHEDULER)
 
 	// prevent excessive scheduling (> 500 Hz)
 	if (now - _last_run_timestamp < 2_ms) {
@@ -428,7 +428,7 @@ VtolAttitudeControl::Run()
 		_vehicle_thrust_setpoint1_pub.publish(_thrust_setpoint_1);
 
 		// Advertise/Publish vtol vehicle status
-		_vtol_vehicle_status.timestamp = hrt_absolute_time();
+		_vtol_vehicle_status.timestamp = now;
 		_vtol_vehicle_status_pub.publish(_vtol_vehicle_status);
 
 		// Publish flaps/spoiler setpoint with configured deflection in Hover if in Auto.
@@ -439,7 +439,7 @@ VtolAttitudeControl::Run()
 			// flaps
 			normalized_unsigned_setpoint_s flaps_setpoint;
 			flaps_setpoint.normalized_setpoint = 0.f; // for now always set flaps to 0 in transitions and hover
-			flaps_setpoint.timestamp = hrt_absolute_time();
+			flaps_setpoint.timestamp = now;
 			_flaps_setpoint_pub.publish(flaps_setpoint);
 
 			// spoilers
@@ -452,7 +452,7 @@ VtolAttitudeControl::Run()
 
 			normalized_unsigned_setpoint_s spoiler_setpoint;
 			spoiler_setpoint.normalized_setpoint = spoiler_control;
-			spoiler_setpoint.timestamp = hrt_absolute_time();
+			spoiler_setpoint.timestamp = now;
 			_spoilers_setpoint_pub.publish(spoiler_setpoint);
 		}
 	}

@@ -64,11 +64,12 @@ void Tailsitter::update_vtol_state()
 	 * For the backtransition the pitch is controlled in MC mode again and switches to full MC control reaching the sufficient pitch angle.
 	*/
 
+	const hrt_abstime now = hrt_absolute_time();
 
 	if (_vtol_vehicle_status->fixed_wing_system_failure) {
 		// Failsafe event, switch to MC mode immediately
 		if (_vtol_mode != vtol_mode::MC_MODE) {
-			_transition_start_timestamp = hrt_absolute_time();
+			_transition_start_timestamp = now;
 		}
 
 		_vtol_mode = vtol_mode::MC_MODE;
@@ -116,7 +117,7 @@ void Tailsitter::update_vtol_state()
 
 				if (isFrontTransitionCompleted()) {
 					_vtol_mode = vtol_mode::FW_MODE;
-					_trans_finished_ts = hrt_absolute_time();
+					_trans_finished_ts = now;
 				}
 
 				break;
@@ -125,7 +126,7 @@ void Tailsitter::update_vtol_state()
 		case vtol_mode::TRANSITION_BACK:
 			// failsafe into fixed wing mode
 			_vtol_mode = vtol_mode::FW_MODE;
-			_trans_finished_ts = hrt_absolute_time();
+			_trans_finished_ts = now;
 			break;
 		}
 	}
@@ -237,7 +238,7 @@ void Tailsitter::update_transition_state()
 		blendThrottleBeginningBackTransition(progress);
 	}
 
-	_v_att_sp->timestamp = hrt_absolute_time();
+	_v_att_sp->timestamp = now;
 
 	const Eulerf euler_sp(_q_trans_sp);
 	_q_trans_sp.copyTo(_v_att_sp->q_d);
@@ -260,25 +261,27 @@ void Tailsitter::update_fw_state()
 */
 void Tailsitter::fill_actuator_outputs()
 {
-	_torque_setpoint_0->timestamp = hrt_absolute_time();
+	const hrt_abstime now = hrt_absolute_time();
+
+	_torque_setpoint_0->timestamp = now;
 	_torque_setpoint_0->timestamp_sample = _vehicle_torque_setpoint_virtual_mc->timestamp_sample;
 	_torque_setpoint_0->xyz[0] = 0.f;
 	_torque_setpoint_0->xyz[1] = 0.f;
 	_torque_setpoint_0->xyz[2] = 0.f;
 
-	_torque_setpoint_1->timestamp = hrt_absolute_time();
+	_torque_setpoint_1->timestamp = now;
 	_torque_setpoint_1->timestamp_sample = _vehicle_torque_setpoint_virtual_fw->timestamp_sample;
 	_torque_setpoint_1->xyz[0] = 0.f;
 	_torque_setpoint_1->xyz[1] = 0.f;
 	_torque_setpoint_1->xyz[2] = 0.f;
 
-	_thrust_setpoint_0->timestamp = hrt_absolute_time();
+	_thrust_setpoint_0->timestamp = now;
 	_thrust_setpoint_0->timestamp_sample = _vehicle_thrust_setpoint_virtual_mc->timestamp_sample;
 	_thrust_setpoint_0->xyz[0] = 0.f;
 	_thrust_setpoint_0->xyz[1] = 0.f;
 	_thrust_setpoint_0->xyz[2] = 0.f;
 
-	_thrust_setpoint_1->timestamp = hrt_absolute_time();
+	_thrust_setpoint_1->timestamp = now;
 	_thrust_setpoint_1->timestamp_sample = _vehicle_thrust_setpoint_virtual_fw->timestamp_sample;
 	_thrust_setpoint_1->xyz[0] = 0.f;
 	_thrust_setpoint_1->xyz[1] = 0.f;

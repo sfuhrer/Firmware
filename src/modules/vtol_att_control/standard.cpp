@@ -281,25 +281,27 @@ void Standard::update_fw_state()
  */
 void Standard::fill_actuator_outputs()
 {
-	_torque_setpoint_0->timestamp = hrt_absolute_time();
+	const hrt_abstime now = hrt_absolute_time();
+
+	_torque_setpoint_0->timestamp = now;
 	_torque_setpoint_0->timestamp_sample = _vehicle_torque_setpoint_virtual_mc->timestamp_sample;
 	_torque_setpoint_0->xyz[0] = 0.f;
 	_torque_setpoint_0->xyz[1] = 0.f;
 	_torque_setpoint_0->xyz[2] = 0.f;
 
-	_torque_setpoint_1->timestamp = hrt_absolute_time();
+	_torque_setpoint_1->timestamp = now;
 	_torque_setpoint_1->timestamp_sample = _vehicle_torque_setpoint_virtual_fw->timestamp_sample;
 	_torque_setpoint_1->xyz[0] = 0.f;
 	_torque_setpoint_1->xyz[1] = 0.f;
 	_torque_setpoint_1->xyz[2] = 0.f;
 
-	_thrust_setpoint_0->timestamp = hrt_absolute_time();
+	_thrust_setpoint_0->timestamp = now;
 	_thrust_setpoint_0->timestamp_sample = _vehicle_thrust_setpoint_virtual_mc->timestamp_sample;
 	_thrust_setpoint_0->xyz[0] = 0.f;
 	_thrust_setpoint_0->xyz[1] = 0.f;
 	_thrust_setpoint_0->xyz[2] = 0.f;
 
-	_thrust_setpoint_1->timestamp = hrt_absolute_time();
+	_thrust_setpoint_1->timestamp = now;
 	_thrust_setpoint_1->timestamp_sample = _vehicle_thrust_setpoint_virtual_fw->timestamp_sample;
 	_thrust_setpoint_1->xyz[0] = 0.f;
 	_thrust_setpoint_1->xyz[1] = 0.f;
