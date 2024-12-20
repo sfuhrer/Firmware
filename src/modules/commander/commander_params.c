@@ -1018,3 +1018,14 @@ PARAM_DEFINE_FLOAT(COM_THROW_SPEED, 5);
  * @increment 1
  */
 PARAM_DEFINE_INT32(COM_FLTT_LOW_ACT, 3);
+
+/**
+ * Reset GPS control setting on link loss
+ *
+ * If set to true, the GPS control setting is reset to the last value
+ * set before arming when the link is lost.
+ *
+ * @group Commander
+ * @boolean
+ */
+PARAM_DEFINE_INT32(COM_DLL_GPS_CTRL, 0);

@@ -1829,6 +1829,33 @@ void Commander::run()
 		// data link checks which update the status
 		dataLinkCheck();
 
+		if (!_actuator_armed.armed) {
+			// Store gps setting if not armed to optionally reset to later in flight
+			_gps_ctrl_setting_on_takeoff = _param_ekf2_gps_ctrl.get();
+		}
+
+		if (_param_com_dll_gps_ctrl.get() && _actuator_armed.armed && _vehicle_status.gcs_connection_lost) {
+			// Reset GPS control setting to what it was on takeoff.
+			// Only allow "higher" setting (more fusion).
+			if (_gps_ctrl_setting_on_takeoff > _param_ekf2_gps_ctrl.get()) {
+				_param_ekf2_gps_ctrl.set(_gps_ctrl_setting_on_takeoff);
+				_param_ekf2_gps_ctrl.commit();
+				PX4_INFO("Reset EKF2_GPS_CTRL to %d", _gps_ctrl_setting_on_takeoff);
+			}
+		}
+
+		// // Check that the design parameters are inside the absolute maximum constraints
+		// if (_param_mpc_xy_cruise.get() > _param_mpc_xy_vel_max.get()) {
+		// 	_param_mpc_xy_cruise.set(_param_mpc_xy_vel_max.get());
+		// 	_param_mpc_xy_cruise.commit();
+		// 	mavlink_log_critical(&_mavlink_log_pub, "Cruise speed has been constrained by max speed\t");
+		// 	/* EVENT
+		// 	 * @description <param>MPC_XY_CRUISE</param> is set to {1:.0}.
+		// 	 */
+		// 	events::send<float>(events::ID("mc_pos_ctrl_cruise_set"), events::Log::Warning,
+		// 			    "Cruise speed has been constrained by maximum speed", _param_mpc_xy_vel_max.get());
+		// }
+
 		// Check for failure detector status
 		if (_failure_detector.update(_vehicle_status, _vehicle_control_mode)) {
 			_vehicle_status.failure_detector_status = _failure_detector.getStatus().value;
