@@ -633,7 +633,7 @@ FwLateralLongitudinalControl::adapt_airspeed_setpoint(const float control_interv
 			// current airpseed is below minimum - init with minimum
 			_airspeed_slew_rate_controller.setForcedValue(system_min_airspeed);
 
-		} else if (PX4_ISFINITE(_long_control_state.airspeed_eas) && _long_control_state.airspeed_eas < system_min_airspeed) {
+		} else if (PX4_ISFINITE(_long_control_state.airspeed_eas) && _long_control_state.airspeed_eas > system_max_airspeed) {
 			// current airpseed is above maximum - init with maximum
 			_airspeed_slew_rate_controller.setForcedValue(system_max_airspeed);
 

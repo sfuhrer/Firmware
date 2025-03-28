@@ -756,6 +756,8 @@ FixedwingPositionControl::control_auto_position(const float control_interval, co
 		throttle_max = 0.0;
 	}
 
+	const float target_airspeed = pos_sp_curr.cruising_speed > FLT_EPSILON ? pos_sp_curr.cruising_speed : NAN;
+
 	// waypoint is a plain navigation waypoint
 	float position_sp_alt = pos_sp_curr.alt;
 
@@ -795,7 +797,7 @@ FixedwingPositionControl::control_auto_position(const float control_interval, co
 		.timestamp = hrt_absolute_time(),
 		.altitude = position_sp_alt,
 		.height_rate = NAN,
-		.equivalent_airspeed = pos_sp_curr.cruising_speed,
+		.equivalent_airspeed = target_airspeed,
 		.pitch_direct = NAN,
 		.throttle_direct = NAN
 	};
@@ -843,11 +845,13 @@ FixedwingPositionControl::control_auto_velocity(const float control_interval, co
 	fw_lateral_ctrl_sp.lateral_acceleration = sp.lateral_acceleration_feedforward;
 	_lateral_ctrl_sp_pub.publish(fw_lateral_ctrl_sp);
 
+	const float target_airspeed = pos_sp_curr.cruising_speed > FLT_EPSILON ? pos_sp_curr.cruising_speed : NAN;
+
 	const fixed_wing_longitudinal_setpoint_s fw_longitudinal_control_sp = {
 		.timestamp = hrt_absolute_time(),
 		.altitude = pos_sp_curr.alt,
 		.height_rate = pos_sp_curr.vz,
-		.equivalent_airspeed = pos_sp_curr.cruising_speed,
+		.equivalent_airspeed = target_airspeed,
 		.pitch_direct = NAN,
 		.throttle_direct = NAN
 	};
@@ -884,7 +888,7 @@ FixedwingPositionControl::control_auto_loiter(const float control_interval, cons
 
 	bool enforce_low_height{false};
 
-	float target_airspeed = pos_sp_curr.cruising_speed;
+	float target_airspeed = pos_sp_curr.cruising_speed > FLT_EPSILON ? pos_sp_curr.cruising_speed : NAN;
 
 	if (pos_sp_next.type == position_setpoint_s::SETPOINT_TYPE_LAND && _position_setpoint_next_valid
 	    && close_to_circle && _param_fw_lnd_earlycfg.get()) {
@@ -961,7 +965,7 @@ FixedwingPositionControl::controlAutoFigureEight(const float control_interval, c
 		const Vector2f &ground_speed, const position_setpoint_s &pos_sp_curr)
 {
 	// airspeed settings
-	float target_airspeed = pos_sp_curr.cruising_speed;
+	const float target_airspeed = pos_sp_curr.cruising_speed > FLT_EPSILON ? pos_sp_curr.cruising_speed : NAN;
 
 	Vector2f curr_pos_local{_local_pos.x, _local_pos.y};
 
@@ -1021,7 +1025,7 @@ void
 FixedwingPositionControl::control_auto_path(const float control_interval, const Vector2d &curr_pos,
 		const Vector2f &ground_speed, const position_setpoint_s &pos_sp_curr)
 {
-	float target_airspeed = pos_sp_curr.cruising_speed;
+	const float target_airspeed = pos_sp_curr.cruising_speed > FLT_EPSILON ? pos_sp_curr.cruising_speed : NAN;
 
 	Vector2f curr_pos_local{_local_pos.x, _local_pos.y};
 	Vector2f curr_wp_local = _global_local_proj_ref.project(pos_sp_curr.lat, pos_sp_curr.lon);
