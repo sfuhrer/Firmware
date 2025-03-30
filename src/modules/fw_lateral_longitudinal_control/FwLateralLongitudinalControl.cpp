@@ -194,6 +194,35 @@ void FwLateralLongitudinalControl::Run()
 					 || _vehicle_status_sub.get().in_transition_mode);
 
 		if (should_run) {
+
+			// ----- Longitudinal ------
+			float pitch_sp{NAN};
+			float throttle_sp{NAN};
+
+			if (_fw_longitudinal_ctrl_sub.updated()) {
+				_fw_longitudinal_ctrl_sub.copy(&_long_control_sp);
+			}
+
+			const float airspeed_sp = adapt_airspeed_setpoint(control_interval, _long_control_sp.equivalent_airspeed,
+						  _min_airspeed_from_guidance, _lateral_control_state.wind_speed.length());
+
+			tecs_update_pitch_throttle(control_interval, _long_control_sp.altitude,
+						   airspeed_sp,
+						   _long_limits.pitch_min,
+						   _long_limits.pitch_max,
+						   _long_limits.throttle_min,
+						   _long_limits.throttle_max,
+						   _long_limits.sink_rate_target,
+						   _long_limits.climb_rate_target,
+						   _long_limits.disable_underspeed_protection,
+						   _long_control_sp.height_rate
+						  );
+
+			pitch_sp = PX4_ISFINITE(_long_control_sp.pitch_direct) ? _long_control_sp.pitch_direct : _tecs.get_pitch_setpoint();
+			throttle_sp = PX4_ISFINITE(_long_control_sp.throttle_direct) ? _long_control_sp.throttle_direct :
+				      _tecs.get_throttle_setpoint();
+
+			// ----- Lateral ------
 			float roll_sp {NAN};
 
 			if (_fw_lateral_ctrl_sub.updated()) {
@@ -209,7 +238,15 @@ void FwLateralLongitudinalControl::Run()
 			if (PX4_ISFINITE(_lat_control_sp.course)) {
 				airspeed_direction_sp = _course_to_airspeed.mapCourseSetpointToHeadingSetpoint(
 								_lat_control_sp.course, _lateral_control_state.wind_speed,
-								_performance_model.getMaximumCalibratedAirspeed(), _param_fw_gnd_spd_min.get());
+								airspeed_sp);
+				// Note: the here updated _min_airspeed_from_guidance is only used in the next iteration
+				// in the longitudinal controller.
+				_min_airspeed_from_guidance = _course_to_airspeed.getMinAirspeedForCurrentBearing(
+								      _lat_control_sp.course, _lateral_control_state.wind_speed,
+								      _performance_model.getMaximumCalibratedAirspeed(), _param_fw_gnd_spd_min.get());
+
+			} else {
+				_min_airspeed_from_guidance = 0.f; // reset if no longer in course control
 			}
 
 			if (PX4_ISFINITE(_lat_control_sp.airspeed_direction)) {
@@ -239,38 +276,6 @@ void FwLateralLongitudinalControl::Run()
 			fixed_wing_lateral_status.can_run_factor = _can_run_factor;
 
 			_fixed_wing_lateral_status_pub.publish(fixed_wing_lateral_status);
-
-
-			// ----- Longitudinal ------
-			float pitch_sp{NAN};
-			float throttle_sp{NAN};
-
-			if (_fw_longitudinal_ctrl_sub.updated()) {
-				_fw_longitudinal_ctrl_sub.copy(&_long_control_sp);
-			}
-
-			const float min_airspeed_guidance = _course_to_airspeed.getMinAirspeedForCurrentBearing(
-					_lat_control_sp.course, _lateral_control_state.wind_speed,
-					_performance_model.getMaximumCalibratedAirspeed(), _param_fw_gnd_spd_min.get());
-
-			const float airspeed_sp = adapt_airspeed_setpoint(control_interval, _long_control_sp.equivalent_airspeed,
-						  min_airspeed_guidance, _lateral_control_state.wind_speed.length());
-
-			tecs_update_pitch_throttle(control_interval, _long_control_sp.altitude,
-						   airspeed_sp,
-						   _long_limits.pitch_min,
-						   _long_limits.pitch_max,
-						   _long_limits.throttle_min,
-						   _long_limits.throttle_max,
-						   _long_limits.sink_rate_target,
-						   _long_limits.climb_rate_target,
-						   _long_limits.disable_underspeed_protection,
-						   _long_control_sp.height_rate
-						  );
-
-			pitch_sp = PX4_ISFINITE(_long_control_sp.pitch_direct) ? _long_control_sp.pitch_direct : _tecs.get_pitch_setpoint();
-			throttle_sp = PX4_ISFINITE(_long_control_sp.throttle_direct) ? _long_control_sp.throttle_direct :
-				      _tecs.get_throttle_setpoint();
 
 			// additional is_finite checks that should not be necessary, but are kept for safety
 			float roll_body = PX4_ISFINITE(roll_sp) ? roll_sp : 0.0f;

@@ -207,6 +207,8 @@ private:
 	CourseToAirspeedRefMapper _course_to_airspeed;
 	AirspeedReferenceController _airspeed_ref_control;
 
+	float _min_airspeed_from_guidance{0.f}; // need to store it bc we only update after running longitudinal controller
+
 	void parameters_update();
 	void update_control_state();
 	void tecs_update_pitch_throttle(const float control_interval, float alt_sp, float airspeed_sp,

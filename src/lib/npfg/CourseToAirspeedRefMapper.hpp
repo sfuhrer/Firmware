@@ -72,7 +72,7 @@ public:
 	~CourseToAirspeedRefMapper() = default;
 
 	float mapCourseSetpointToHeadingSetpoint(const float bearing_setpoint,
-			const matrix::Vector2f &wind_vel, float max_airspeed, float min_ground_speed) const;
+			const matrix::Vector2f &wind_vel, float airspeed_sp) const;
 	float getMinAirspeedForCurrentBearing(const float bearing_setpoint,
 					      const matrix::Vector2f &wind_vel, float max_airspeed, float min_ground_speed) const;
 
