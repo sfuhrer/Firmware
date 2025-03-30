@@ -203,11 +203,11 @@ void FwLateralLongitudinalControl::Run()
 				_fw_longitudinal_ctrl_sub.copy(&_long_control_sp);
 			}
 
-			const float airspeed_sp = adapt_airspeed_setpoint(control_interval, _long_control_sp.equivalent_airspeed,
-						  _min_airspeed_from_guidance, _lateral_control_state.wind_speed.length());
+			const float airspeed_sp_eas = adapt_airspeed_setpoint(control_interval, _long_control_sp.equivalent_airspeed,
+						      _min_airspeed_from_guidance, _lateral_control_state.wind_speed.length());
 
 			tecs_update_pitch_throttle(control_interval, _long_control_sp.altitude,
-						   airspeed_sp,
+						   airspeed_sp_eas,
 						   _long_limits.pitch_min,
 						   _long_limits.pitch_max,
 						   _long_limits.throttle_min,
@@ -238,12 +238,15 @@ void FwLateralLongitudinalControl::Run()
 			if (PX4_ISFINITE(_lat_control_sp.course)) {
 				airspeed_direction_sp = _course_to_airspeed.mapCourseSetpointToHeadingSetpoint(
 								_lat_control_sp.course, _lateral_control_state.wind_speed,
-								airspeed_sp);
+								airspeed_sp_eas);
+
 				// Note: the here updated _min_airspeed_from_guidance is only used in the next iteration
 				// in the longitudinal controller.
+				const float max_true_airspeed = _performance_model.getMaximumCalibratedAirspeed() * _long_control_state.eas2tas;
 				_min_airspeed_from_guidance = _course_to_airspeed.getMinAirspeedForCurrentBearing(
 								      _lat_control_sp.course, _lateral_control_state.wind_speed,
-								      _performance_model.getMaximumCalibratedAirspeed(), _param_fw_gnd_spd_min.get());
+								      max_true_airspeed, _param_fw_gnd_spd_min.get())
+							      / _long_control_state.eas2tas;
 
 			} else {
 				_min_airspeed_from_guidance = 0.f; // reset if no longer in course control
@@ -602,6 +605,10 @@ void FwLateralLongitudinalControl::updateAirspeed() {
 
 	// no airspeed updates for one second --> declare invalid
 	const bool airspeed_valid = hrt_elapsed_time(&_time_airspeed_last_valid) < 1_s;
+
+	if (!airspeed_valid) {
+		_long_control_state.eas2tas = 1.f;
+	}
 
 	_tecs.enable_airspeed(airspeed_valid);
 }
