@@ -38,12 +38,7 @@ float
 CourseToAirspeedRefMapper::mapCourseSetpointToHeadingSetpoint(const float bearing_setpoint, const Vector2f &wind_vel,
 		float airspeed_max, float min_ground_speed) const
 {
-	const Vector2f bearing_vector = Vector2f{cosf(bearing_setpoint), sinf(bearing_setpoint)};
-	const float wind_cross_bearing = wind_vel.cross(bearing_vector);
-	const float wind_dot_bearing = wind_vel.dot(bearing_vector);
-
-	const Vector2f air_vel_ref = refAirVelocity(wind_vel, bearing_vector, wind_cross_bearing,
-				     wind_dot_bearing, wind_vel.norm(), airspeed_max, min_ground_speed);
+	const Vector2f air_vel_ref = refAirVelocity(wind_vel, bearing_setpoint, airspeed_max, min_ground_speed);
 
 	return atan2f(air_vel_ref(1), air_vel_ref(0));
 }
@@ -52,20 +47,19 @@ float
 CourseToAirspeedRefMapper::getMinAirspeedForCurrentBearing(const float bearing_setpoint, const Vector2f &wind_vel,
 		float airspeed_max, float min_ground_speed) const
 {
-	const Vector2f bearing_vector = Vector2f{cosf(bearing_setpoint), sinf(bearing_setpoint)};
-	const float wind_cross_bearing = wind_vel.cross(bearing_vector);
-	const float wind_dot_bearing = wind_vel.dot(bearing_vector);
-
-	const Vector2f air_vel_ref = refAirVelocity(wind_vel, bearing_vector, wind_cross_bearing,
-				     wind_dot_bearing, wind_vel.norm(), airspeed_max, min_ground_speed);
+	const Vector2f air_vel_ref = refAirVelocity(wind_vel, bearing_setpoint, airspeed_max, min_ground_speed);
 
 	return air_vel_ref.norm();
 }
 
-matrix::Vector2f CourseToAirspeedRefMapper::refAirVelocity(const Vector2f &wind_vel, const Vector2f &bearing_vec,
-		const float wind_cross_bearing, const float wind_dot_bearing,
-		const float wind_speed, float airspeed_max, float min_ground_speed) const
+matrix::Vector2f CourseToAirspeedRefMapper::refAirVelocity(const Vector2f &wind_vel, const float bearing_setpoint,
+		float airspeed_max, float min_ground_speed) const
 {
+	const Vector2f bearing_vector = Vector2f{cosf(bearing_setpoint), sinf(bearing_setpoint)};
+	const float wind_cross_bearing = wind_vel.cross(bearing_vector);
+	const float wind_dot_bearing = wind_vel.dot(bearing_vector);
+	const float wind_speed = wind_vel.norm();
+
 	Vector2f air_vel_ref;
 
 	const float airspeed_nom_ = 15.f; //TODO pass as arguemnt or remove
@@ -81,24 +75,24 @@ matrix::Vector2f CourseToAirspeedRefMapper::refAirVelocity(const Vector2f &wind_
 			if (bearingIsFeasible(wind_cross_bearing, wind_dot_bearing, airspeed_max, wind_speed)) {
 				// we will not maintain the minimum ground speed, but can still achieve the bearing at maximum airspeed
 				const float airsp_dot_bearing = projectAirspOnBearing(airspeed_max, wind_cross_bearing);
-				air_vel_ref = solveWindTriangle(wind_cross_bearing, airsp_dot_bearing, bearing_vec);
+				air_vel_ref = solveWindTriangle(wind_cross_bearing, airsp_dot_bearing, bearing_vector);
 
 			} else {
 				// bearing is maximally infeasible, employ mitigation law
-				air_vel_ref = infeasibleAirVelRef(wind_vel, bearing_vec, wind_speed, airspeed_max);
+				air_vel_ref = infeasibleAirVelRef(wind_vel, bearing_vector, wind_speed, airspeed_max);
 			}
 
 		} else if (airspeed_min > airspeed_nom_) {
 			// the minimum ground speed is achievable within the nom - max airspeed range
 			// solve wind triangle with for air velocity reference with minimum airspeed
 			const float airsp_dot_bearing = projectAirspOnBearing(airspeed_min, wind_cross_bearing);
-			air_vel_ref = solveWindTriangle(wind_cross_bearing, airsp_dot_bearing, bearing_vec);
+			air_vel_ref = solveWindTriangle(wind_cross_bearing, airsp_dot_bearing, bearing_vector);
 
 		} else {
 			// the minimum required airspeed is less than nominal, so we can track the bearing and minimum
 			// ground speed with our nominal airspeed reference
 			const float airsp_dot_bearing = projectAirspOnBearing(airspeed_nom_, wind_cross_bearing);
-			air_vel_ref = solveWindTriangle(wind_cross_bearing, airsp_dot_bearing, bearing_vec);
+			air_vel_ref = solveWindTriangle(wind_cross_bearing, airsp_dot_bearing, bearing_vector);
 		}
 	}
 
