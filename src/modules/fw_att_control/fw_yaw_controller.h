@@ -63,9 +63,10 @@ public:
 	 * @return Roll body rate setpoint [rad/s]
 	 */
 	float control_yaw(float roll_setpoint, float euler_pitch_rate_setpoint, float roll, float pitch,
-			  float airspeed);
+			  float airspeed, float yaw_yaw_setpoint, float yaw);
 
 	void set_max_rate(float max_rate) { _max_rate = max_rate; }
+	void set_time_constant(float time_constant) { _tc = time_constant; }
 
 	float get_euler_rate_setpoint() { return _euler_rate_setpoint; }
 	float get_body_rate_setpoint() { return _body_rate_setpoint; }
@@ -74,6 +75,7 @@ private:
 	float _max_rate;
 	float _euler_rate_setpoint;
 	float _body_rate_setpoint;
+	float _tc;
 };
 
 #endif // FW_YAW_CONTROLLER_H

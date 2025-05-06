@@ -77,6 +77,7 @@ FixedwingAttitudeControl::parameters_update()
 	_pitch_ctrl.set_max_rate_neg(radians(_param_fw_p_rmax_neg.get()));
 
 	_yaw_ctrl.set_max_rate(radians(_param_fw_y_rmax.get()));
+	_yaw_ctrl.set_time_constant(_param_fw_y_tc.get());
 
 	_wheel_ctrl.set_k_p(_param_fw_wr_p.get());
 	_wheel_ctrl.set_k_i(_param_fw_wr_i.get());
@@ -299,13 +300,14 @@ void FixedwingAttitudeControl::Run()
 					const Eulerf euler_sp(q_sp);
 					const float roll_sp = euler_sp.phi();
 					const float pitch_sp = euler_sp.theta();
+					const float yaw_sp = euler_sp.psi();
 
 					_roll_ctrl.control_roll(roll_sp, _yaw_ctrl.get_euler_rate_setpoint(), euler_angles.phi(),
 								euler_angles.theta());
 					_pitch_ctrl.control_pitch(pitch_sp, _yaw_ctrl.get_euler_rate_setpoint(), euler_angles.phi(),
 								  euler_angles.theta());
 					_yaw_ctrl.control_yaw(roll_sp, _pitch_ctrl.get_euler_rate_setpoint(), euler_angles.phi(),
-							      euler_angles.theta(), get_airspeed_constrained());
+							      euler_angles.theta(), get_airspeed_constrained(), yaw_sp, euler_angles.psi());
 
 					/* Update input data for rate controllers */
 					Vector3f body_rates_setpoint = Vector3f(_roll_ctrl.get_body_rate_setpoint(), _pitch_ctrl.get_body_rate_setpoint(),

@@ -71,6 +71,21 @@ PARAM_DEFINE_FLOAT(FW_R_TC, 0.4f);
 PARAM_DEFINE_FLOAT(FW_P_TC, 0.4f);
 
 /**
+ * Attitude yaw (skid to turn) time constant
+ *
+ * This defines the latency between a yaw step input and the achieved setpoint
+ * (inverse to a P gain). Smaller systems may require smaller values.
+ *
+ * @unit s
+ * @min 0.2
+ * @max 1.0
+ * @decimal 2
+ * @increment 0.05
+ * @group FW Attitude Control
+ */
+PARAM_DEFINE_FLOAT(FW_Y_TC, 0.4f);
+
+/**
  * Maximum positive / up pitch rate setpoint
  *
  * @unit deg/s

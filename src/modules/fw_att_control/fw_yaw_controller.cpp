@@ -42,7 +42,7 @@
 #include <mathlib/mathlib.h>
 
 float YawController::control_yaw(float roll_setpoint, float euler_pitch_rate_setpoint, float roll, float pitch,
-				 float airspeed)
+				 float airspeed, float yaw_setpoint, float yaw)
 {
 	/* Do not calculate control signal with bad inputs */
 	if (!(PX4_ISFINITE(roll_setpoint) &&
@@ -81,8 +81,19 @@ float YawController::control_yaw(float roll_setpoint, float euler_pitch_rate_set
 
 
 	if (!inverted) {
-		/* Calculate desired yaw rate from coordinated turn constraint / (no side forces) */
-		_euler_rate_setpoint = tanf(constrained_roll) * cosf(pitch) * CONSTANTS_ONE_G / airspeed;
+		const bool skid_to_turn = true;
+
+		// for now only do either skid-to-turn or coordinated turn
+		if (!skid_to_turn) {
+			/* Calculate desired yaw rate from coordinated turn constraint / (no side forces) */
+			_euler_rate_setpoint = tanf(constrained_roll) * cosf(pitch) * CONSTANTS_ONE_G / airspeed;
+
+		} else {
+			const float yaw_error = yaw_setpoint - yaw;
+			_euler_rate_setpoint = yaw_error / _tc;
+			printf("yaw_setpoint: %f, yaw: %f, yaw_error: %f, _euler_rate_setpoint: %f\n",
+			       (double)yaw_setpoint, (double)yaw, (double)yaw_error, (double)_euler_rate_setpoint);
+		}
 
 		/* Transform setpoint to body angular rates (jacobian) */
 		const float yaw_body_rate_setpoint_raw = -sinf(roll) * euler_pitch_rate_setpoint +
