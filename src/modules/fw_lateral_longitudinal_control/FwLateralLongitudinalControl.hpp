@@ -229,6 +229,8 @@ private:
 
 	float mapLateralAccelerationToRollAngle(float lateral_acceleration_sp) const;
 
+	float mapLateralAccelerationToYawAngle(float lateral_acceleration_sp) const;
+
 	void updateWind();
 
 	void updateTECSAltitudeTimeConstant(const bool is_low_height, const float dt);

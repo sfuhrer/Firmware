@@ -227,6 +227,7 @@ void FwLateralLongitudinalControl::Run()
 
 			// ----- Lateral ------
 			float roll_sp {NAN};
+			float yaw_sp {NAN};
 
 			if (_fw_lateral_ctrl_sub.updated()) {
 				// We store the update of _fw_lateral_ctrl_sub in a member variable instead of only local such that we can run
@@ -274,7 +275,23 @@ void FwLateralLongitudinalControl::Run()
 			lateral_accel_sp = getCorrectedLateralAccelSetpoint(lateral_accel_sp);
 			lateral_accel_sp = math::constrain(lateral_accel_sp, -_lateral_configuration.lateral_accel_max,
 							   _lateral_configuration.lateral_accel_max);
-			roll_sp = mapLateralAccelerationToRollAngle(lateral_accel_sp);
+
+			const bool skid_to_turn = true;
+
+			if (!skid_to_turn) {
+				// for now only do either skid-to-turn or coordinated turn
+				roll_sp = mapLateralAccelerationToRollAngle(lateral_accel_sp);
+				yaw_sp = NAN;
+
+			} else {
+				// skid-to-turn
+				const float heading = atan2f(airspeed_vector(1), airspeed_vector(0));
+				const float course = _course_to_airspeed.mapHeadingSetpointToCourseSetpoint(heading,
+						     _lateral_control_state.wind_speed, airspeed_sp_eas);
+				roll_sp = 0.f
+					  const float sideslip_angle_sp = lateral_accel_sp * gain;
+				yaw_sp = sideslip_angle_sp + course;
+			}
 
 			fixed_wing_lateral_status_s fixed_wing_lateral_status{};
 			fixed_wing_lateral_status.timestamp = hrt_absolute_time();
@@ -286,7 +303,7 @@ void FwLateralLongitudinalControl::Run()
 			// additional is_finite checks that should not be necessary, but are kept for safety
 			float roll_body = PX4_ISFINITE(roll_sp) ? roll_sp : 0.0f;
 			float pitch_body = PX4_ISFINITE(pitch_sp) ? pitch_sp : 0.0f;
-			const float yaw_body = _yaw; // yaw is not controlled in fixed wing, need to set it though for quaternion generation
+			float yaw_body = PX4_ISFINITE(yaw_sp) ? yaw_sp : _yaw;
 			const float thrust_body_x = PX4_ISFINITE(throttle_sp) ? throttle_sp : 0.0f;
 
 			if (_control_mode_sub.get().flag_control_manual_enabled) {
